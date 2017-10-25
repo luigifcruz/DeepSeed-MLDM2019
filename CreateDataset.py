@@ -9,7 +9,7 @@ import sys
 train_size = 0.80;
 train_tfrecords_filename = 'train-dataset.tfrecords'
 valid_tfrecords_filename = 'valid-dataset.tfrecords'
-dataset_path = '../../Banco_Imagens/Sementes_Soja/Primario/Sementes'
+dataset_path = '../../Banco_Imagens/Sementes_Soja/Primario'
 
 def _bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
