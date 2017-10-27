@@ -7,6 +7,8 @@ import cv2
 import sys
 
 train_size = 0.80;
+width = 352
+height = 560
 train_tfrecords_filename = 'train-dataset.tfrecords'
 valid_tfrecords_filename = 'valid-dataset.tfrecords'
 dataset_path = '../../Banco_Imagens/Sementes_Soja/Primario'
@@ -20,7 +22,9 @@ def _int64_feature(value):
 
 
 def pack_image(path, label, writer):
-    img_raw = np.array(Image.open(path).convert('L')).tostring()
+    img = Image.open(path)
+    img = img.resize((width, height), Image.BILINEAR)
+    img_raw = np.array(img).tostring()
 
     example = tf.train.Example(features=tf.train.Features(feature={
         'image_raw': _bytes_feature(img_raw),

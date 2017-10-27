@@ -13,7 +13,7 @@ def read_and_decode(filename_queue, real=0):
     label = tf.cast(features['label'], tf.int32)
 
     if real:
-        image_shape = tf.stack([560, 352, 1])
+        image_shape = tf.stack([560, 352, 3])
     else: 
         image_shape = tf.stack([352 * 560])
         label = tf.stack(tf.one_hot(label, 26, on_value=1, off_value=0))
@@ -23,7 +23,7 @@ def read_and_decode(filename_queue, real=0):
     return tf.train.shuffle_batch(
         [image, label], 
         batch_size=10,
-        num_threads=4,
+        num_threads=2,
         capacity=6000,
         min_after_dequeue=4000)
 
@@ -46,11 +46,11 @@ def show_labels_and_images(tfrecords_filename):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         
-        for i in xrange(150):
+        for i in xrange(10):
             image, label = sess.run([images, labels])
             #print(label)
             plt.title(label)
-            plt.imshow(image[0, :, :, 0], cmap='gray')
+            plt.imshow(image[0, :, :, :])
             plt.show()
 
         coord.request_stop()

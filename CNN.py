@@ -1,15 +1,18 @@
 import tensorflow as tf
 import ReadDataset
 from datetime import datetime;
+from tensorflow.contrib.tensorboard.plugins import projector
 import math
 import sys
 
 n_classes = 26
 batch_size = 10
+image_width = 352
+image_height = 560
+number_channels = 3
 
 x = tf.placeholder('float', [None, (352*560)])
 y = tf.placeholder('float', [batch_size, n_classes])
-keep_prob = tf.placeholder(tf.float32)
 
 def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding='SAME')
@@ -18,46 +21,61 @@ def maxpool2d(x):
     return tf.nn.max_pool(x, ksize=[1,2,2,1], strides=[1,2,2,1], padding='SAME')
 
 def convolutional_neural_network(x):
-    weights = {'W_conv1':tf.Variable(tf.random_normal([5,5,1,32])),
-               'W_conv2':tf.Variable(tf.random_normal([5,5,32,64])),
-               'W_conv3':tf.Variable(tf.random_normal([5,5,64,128])),
-               'W_conv4':tf.Variable(tf.random_normal([5,5,128,256])),
-               'W_fc':tf.Variable(tf.random_normal([22*35*256,512])),
-               'out':tf.Variable(tf.random_normal([512, n_classes]))}
+    input_layer = tf.reshape(x, shape=[-1, image_width, image_height, number_channels])
 
-    biases = {'b_conv1':tf.Variable(tf.random_normal([32])),
-              'b_conv2':tf.Variable(tf.random_normal([64])),
-              'b_conv3':tf.Variable(tf.random_normal([128])),
-              'b_conv4':tf.Variable(tf.random_normal([256])),
-              'b_fc':tf.Variable(tf.random_normal([512])),
-              'out':tf.Variable(tf.random_normal([n_classes]))}
+    # Convolution 1
+    conv1 = tf.layers.conv2d(
+                inputs=input_layer,
+                filters=32,
+                kernel_size=[5, 5],
+                padding="SAME",
+                activation=tf.nn.relu)
 
-    x = tf.reshape(x, shape=[-1, 352, 560, 1])
+    pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
 
-    conv1 = tf.nn.relu(conv2d(x, weights['W_conv1']) + biases['b_conv1'])
-    conv1 = maxpool2d(conv1)
-    
-    conv2 = tf.nn.relu(conv2d(conv1, weights['W_conv2']) + biases['b_conv2'])
-    conv2 = maxpool2d(conv2)
+    # Convolution 2
+    conv2 = tf.layers.conv2d(
+                inputs=pool1,
+                filters=64,
+                kernel_size=[5, 5],
+                padding="SAME",
+                activation=tf.nn.relu)
 
-    conv3 = tf.nn.relu(conv2d(conv2, weights['W_conv3']) + biases['b_conv3'])
-    conv3 = maxpool2d(conv3)
+    pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
 
-    conv4 = tf.nn.relu(conv2d(conv3, weights['W_conv4']) + biases['b_conv4'])
-    conv4 = maxpool2d(conv4)
+    # Convolution 3
+    conv3 = tf.layers.conv2d(
+                inputs=pool2,
+                filters=128,
+                kernel_size=[5, 5],
+                padding="SAME",
+                activation=tf.nn.relu)
 
-    fc = tf.reshape(conv4,[-1, 22*35*256])
-    fc = tf.nn.relu(tf.matmul(fc, weights['W_fc'])+biases['b_fc'])
-    drop_out = tf.nn.dropout(fc, keep_prob)
+    pool3 = tf.layers.max_pooling2d(inputs=conv3, pool_size=[2, 2], strides=2)
 
-    output = tf.matmul(drop_out, weights['out'])+biases['out']
+    # Convolution 4
+    conv4 = tf.layers.conv2d(
+                inputs=pool3,
+                filters=256,
+                kernel_size=[5, 5],
+                padding="SAME",
+                activation=tf.nn.relu)
 
-    return output
+    pool4 = tf.layers.max_pooling2d(inputs=conv4, pool_size=[2, 2], strides=2)
+
+    # Dense Layer
+    pool4_flat = tf.reshape(pool4,[-1, (image_width/4)*(image_height/4)*256])
+    dense = tf.layers.dense(inputs=pool4_flat, units=1024, activation=tf.nn.relu)
+
+    # Logits Layer
+    logits = tf.layers.dense(inputs=dense, units=26)
+
+    return logits
 
 def train_neural_network(x):
     prediction = convolutional_neural_network(x)
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
-    optimizer = tf.train.AdamOptimizer(learning_rate=0.001, beta1=0.99).minimize(cost)
+    optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
 
     correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
     accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
@@ -87,8 +105,8 @@ def train_neural_network(x):
             batch_xs, batch_ys = sess.run([train_images, train_labels])
             vbatch_xs, vbatch_ys = sess.run([valid_images, valid_labels])
 
-            feed_dict_train = {x: batch_xs, y: batch_ys, keep_prob: 0.8}
-            feed_dict_validate = {x: vbatch_xs, y: vbatch_ys, keep_prob: 1.0}
+            feed_dict_train = {x: batch_xs, y: batch_ys}
+            feed_dict_validate = {x: vbatch_xs, y: vbatch_ys}
 
             sess.run(optimizer, feed_dict=feed_dict_train)
 
