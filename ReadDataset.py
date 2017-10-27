@@ -15,21 +15,21 @@ def read_and_decode(filename_queue, real=0):
     if real:
         image_shape = tf.stack([560, 352, 3])
     else: 
-        image_shape = tf.stack([352 * 560])
-        label = tf.stack(tf.one_hot(label, 26, on_value=1, off_value=0))
+        image_shape = tf.stack([352 * 560 * 3])
+        label = tf.stack(tf.one_hot(label, 12, on_value=1, off_value=0))
 
     image = tf.reshape(image, image_shape)
 
     return tf.train.shuffle_batch(
         [image, label], 
-        batch_size=10,
+        batch_size=20,
         num_threads=2,
-        capacity=6000,
-        min_after_dequeue=4000)
+        capacity=600,
+        min_after_dequeue=400)
 
 
 def load_labels_and_images(tfrecords_filename, real=0):
-    filename_queue = tf.train.string_input_producer([tfrecords_filename], num_epochs=20)
+    filename_queue = tf.train.string_input_producer([tfrecords_filename], num_epochs=58)
     return read_and_decode(filename_queue, real)
     
 def example_number(tfrecords_filename):
@@ -46,12 +46,12 @@ def show_labels_and_images(tfrecords_filename):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         
-        for i in xrange(10):
+        for i in range(3000):
             image, label = sess.run([images, labels])
-            #print(label)
-            plt.title(label)
-            plt.imshow(image[0, :, :, :])
-            plt.show()
+            print(label)
+            #plt.title(label)
+            #plt.imshow(image[0, :, :, :])
+            #plt.show()
 
         coord.request_stop()
         coord.join(threads)

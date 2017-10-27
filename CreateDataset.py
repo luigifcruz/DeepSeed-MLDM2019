@@ -3,15 +3,14 @@ from PIL import Image
 from glob import glob
 import numpy as np
 import random
-import cv2
 import sys
 
-train_size = 0.80;
+train_size = 0.90;
 width = 352
 height = 560
 train_tfrecords_filename = 'train-dataset.tfrecords'
 valid_tfrecords_filename = 'valid-dataset.tfrecords'
-dataset_path = '../../Banco_Imagens/Sementes_Soja/Primario'
+dataset_path = '../../Banco_Imagens/Sementes_Soja/Secundario'
 
 def _bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
