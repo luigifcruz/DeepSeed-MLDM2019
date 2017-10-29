@@ -4,10 +4,11 @@ import sys
 
 # Training Features
 batch_size = 10
-test_size = 8
+test_size = 40
 keep_rate = 0.8
-n_iteration = 1
-dense_size = 128
+n_iteration = 2000
+dense_size = 512
+learning_rate = 1e-4 #AdamOptimizer
 
 # Dataset Features
 n_classes = 12
@@ -65,16 +66,6 @@ def convolutional_layer(input, size_in, size_out, name):
         tf.summary.histogram("Activations", act)
         return tf.nn.max_pool(act, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-def dense_layer(input, size_in, size_out, name):
-    with tf.name_scope(name):
-        w = tf.Variable(tf.truncated_normal([size_in, size_out], stddev=0.1), name="W")
-        b = tf.Variable(tf.constant(0.1, shape=[size_out]), name="B")
-        act = tf.nn.relu(tf.matmul(input, w) + b)
-        tf.summary.histogram("Weights", w)
-        tf.summary.histogram("Biases", b)
-        tf.summary.histogram("Activations", act)
-        return act
-
 def convolutional_neural_network(x):
     # Reshape Image
     input_layer = tf.reshape(x, shape=[-1, image_height, image_width, n_channels])
@@ -91,13 +82,13 @@ def convolutional_neural_network(x):
     flattened = tf.reshape(convolution, [-1, input_size])
 
     # Dense Layer
-    dense = dense_layer(flattened, input_size, dense_size, "Dense_Layer")
+    dense = tf.layers.dense(inputs=flattened, units=dense_size, activation=tf.nn.relu, name="Dense_Layer")
 
     # Dropout Layer
     dropout = tf.layers.dropout(inputs=dense, rate=keep_prob, name="Dropout_Layer")
 
     # Logits Layer
-    logits = dense_layer(dropout, dense_size, n_classes, "Logits_Layer")
+    logits = tf.layers.dense(inputs=dropout, units=n_classes, name="Logits_Layer")
 
     return logits, dense
 
@@ -106,7 +97,7 @@ def train_neural_network(x):
 
     with tf.name_scope('Train'):
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
-        optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cross_entropy)
+        optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy)
         tf.summary.scalar('Cross_Entropy', cross_entropy)
 
         correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
@@ -130,7 +121,7 @@ def train_neural_network(x):
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         merged = tf.summary.merge_all()
         train_writer = tf.summary.FileWriter(LOGDIR + "train", sess.graph)
-        valid_writer = tf.summary.FileWriter(LOGDIR + "validation", sess.graph)
+        valid_writer = tf.summary.FileWriter(LOGDIR + "validation")
 
         config = tf.contrib.tensorboard.plugins.projector.ProjectorConfig()
         embedding_config = config.embeddings.add()
@@ -165,7 +156,7 @@ def train_neural_network(x):
                 valid_writer.add_summary(summary, i)
                 valid_writer.flush() 
 
-                msg = "Epoch {}/{} -- Training Accuracy: {:%}, Validation Accuracy: {:%}, Step: {}"
+                msg = "Epoch {}/{} -- Training Accuracy: {:>6.1%}, Validation Accuracy: {:>6.1%}, Step: {}"
                 print(msg.format(epoch + 1, int(n_iteration/(train_num_examples/batch_size)), acc, val_acc, i))
                 saver.save(sess, LOGDIR + 'model.ckpt', i)
 

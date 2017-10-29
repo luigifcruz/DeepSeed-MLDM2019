@@ -6,7 +6,7 @@ import random
 import sys
 
 train_size = 0.90
-test_size = 0.2
+test_size = 0.1
 width = 352
 height = 560
 train_tfrecords_filename = 'train-dataset.tfrecords'
