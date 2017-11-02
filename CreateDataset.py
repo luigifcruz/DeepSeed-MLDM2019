@@ -4,6 +4,7 @@ from glob import glob
 import numpy as np
 import random
 import sys
+import os
 
 train_size = 0.90
 test_size = 0.1
@@ -12,7 +13,7 @@ height = 560
 train_tfrecords_filename = 'train-dataset.tfrecords'
 valid_tfrecords_filename = 'valid-dataset.tfrecords'
 test_tfrecords_filename = 'test-dataset.tfrecords'
-dataset_path = '../../Banco_Imagens/Sementes_Soja/Secundario'
+dataset_path = '../../Datasets/soy_beans/secundario'
 
 def _bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
@@ -38,13 +39,15 @@ def create_dataset():
     test_writer = tf.python_io.TFRecordWriter(test_tfrecords_filename)
     dataset_list = sorted(glob('{}/*/'.format(dataset_path)))
 
-    with open('./logs/labels.tsv', 'w') as f:
+    with open('./test-labels.tsv', 'w') as test_l, open('./dataset-labels.txt', 'w') as dataset_l:
         for i, path in enumerate(dataset_list):
             print('Packing folder: {}/{}'.format(i+1, len(dataset_list)))
             ft_list = sorted(glob('{}*'.format(path)), key=lambda k: random.random())
+            dir_name = os.path.basename(os.path.normpath(path))
             train_data = ft_list[:int((len(ft_list)+1)*train_size)]
             valid_data = ft_list[int(len(ft_list)*train_size+1):]
             test_data = ft_list[:int((len(ft_list)+1)*test_size)]
+            dataset_l.write("{}:{}\n".format(i, dir_name))
 
             for j, image in enumerate(train_data):
                 sys.stdout.write('\r    Train images: {}/{}'.format(j+1, len(train_data)))
@@ -63,7 +66,7 @@ def create_dataset():
             for j, image in enumerate(test_data):
                 sys.stdout.write('\r    Test images: {}/{}'.format(j+1, len(test_data)))
                 pack_image(image, i, test_writer)
-                f.write('%d\n' % i)
+                test_l.write("{}\n".format(dir_name))
                 sys.stdout.flush()
 
             sys.stdout.write('\n')

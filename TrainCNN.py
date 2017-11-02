@@ -1,12 +1,15 @@
+import matplotlib.pyplot as plt
 from datetime import datetime
 import tensorflow as tf
+import seaborn as sns
 import sys
+import io
 
 # Training Features
 batch_size = 10
 test_size = 40
 keep_rate = 0.8
-n_iteration = 1
+n_iteration = 1024
 dense_size = 1024
 learning_rate = 1e-4 #AdamOptimizer
 
@@ -16,7 +19,7 @@ n_channels = 3
 image_width = 352
 image_height = 560
 
-LOGDIR = "/Users/luigifreitas/CNPq/Comum/tensorflow_cnn/logs/"
+LOGDIR = "/Users/luigifreitas/CNPq/Code/tensorflow_cnn/logs/"
 
 keep_prob = tf.placeholder(tf.float32)
 x = tf.placeholder('float', [None, (image_width*image_height*n_channels)], name="Input_Data")
@@ -98,7 +101,7 @@ def convolutional_neural_network(x):
 def train_neural_network(x):
     prediction, dense_out  = convolutional_neural_network(x)
 
-    with tf.name_scope('Train'):
+    with tf.name_scope('Training_Data'):
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
         optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy)
         tf.summary.scalar('Cross_Entropy', cross_entropy)
@@ -106,6 +109,12 @@ def train_neural_network(x):
         correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
         accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
         tf.summary.scalar('Accuracy', accuracy)
+
+        labels = tf.argmax(y, axis=1)
+        predictions = tf.argmax(prediction, axis=1)
+        confusion = tf.confusion_matrix(labels=labels, predictions=predictions, num_classes=n_classes)
+        confusion_image = tf.reshape(tf.cast(confusion, tf.float32), [1, n_classes, n_classes, 1])
+        tf.summary.image("Confusion_Matrix", confusion_image)
 
     train_images, train_labels = get_shuffle_batch('train-dataset.tfrecords', batch_size, 'Train_Dataset')
     valid_images, valid_labels = get_shuffle_batch('valid-dataset.tfrecords', batch_size, 'Valid_Dataset')
@@ -130,7 +139,7 @@ def train_neural_network(x):
         config = tf.contrib.tensorboard.plugins.projector.ProjectorConfig()
         embedding_config = config.embeddings.add()
         embedding_config.tensor_name = embedding.name
-        embedding_config.metadata_path = LOGDIR + 'labels.tsv'
+        embedding_config.metadata_path = LOGDIR + '../test-labels.tsv'
         tf.contrib.tensorboard.plugins.projector.visualize_embeddings(train_writer, config)
 
         msg = '\n##### Convolutional Neural Network #####\nTrain Dataset Size: {} examples\nNumber of Interations: {}\n\nStarting at '
@@ -152,7 +161,7 @@ def train_neural_network(x):
                 tbatch_xs, tbatch_ys = sess.run([test_images, test_labels])
                 sess.run(assignment, feed_dict={x: tbatch_xs, y: tbatch_ys, keep_prob: 1.0})
 
-            if i % 50 == 0: 
+            if i % 20 == 0: 
                 vbatch_xs, vbatch_ys = sess.run([valid_images, valid_labels])
                 feed_dict_validate = {x: vbatch_xs, y: vbatch_ys, keep_prob: 1.0}
 
