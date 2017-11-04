@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import tensorflow as tf
 from PIL import Image
 from glob import glob
@@ -6,14 +7,43 @@ import random
 import sys
 import os
 
+# Dataset Config
 train_size = 0.90
 test_size = 0.1
 width = 352
 height = 560
+
+# Files Config
+datasets_dir = './datasets/'
 train_tfrecords_filename = 'train-dataset.tfrecords'
 valid_tfrecords_filename = 'valid-dataset.tfrecords'
 test_tfrecords_filename = 'test-dataset.tfrecords'
+
+test_labels = 'labels-test.tsv'
+dataset_labels = 'labels-dataset.txt'
+np_test_labels = 'labels-test.dat'
+
+plot_filename = 'dataset-plot.png'
+
 dataset_path = '../../Datasets/soy_beans/secundario'
+
+
+def generate_plot(n_dir, n_sample, dir_n):
+    fig, ax = plt.subplots()
+    index = np.arange(n_dir)
+    bar_width = 0.8
+    opacity = 0.4
+
+    rects1 = plt.bar(index, n_sample, bar_width, alpha=opacity, color='b', label='Samples')
+
+    plt.xlabel('Groups')
+    plt.ylabel('Samples')
+    plt.title('Dataset Analytics')
+    plt.xticks(index, dir_n)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(datasets_dir + plot_filename, dpi=250)
 
 def _bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
@@ -34,25 +64,39 @@ def pack_image(path, label, writer):
     writer.write(example.SerializeToString())
 
 def create_dataset():
-    train_writer = tf.python_io.TFRecordWriter(train_tfrecords_filename)
-    valid_writer = tf.python_io.TFRecordWriter(valid_tfrecords_filename)
-    test_writer = tf.python_io.TFRecordWriter(test_tfrecords_filename)
+    if not os.path.exists(datasets_dir):
+        os.makedirs(datasets_dir)
+
+    train_writer = tf.python_io.TFRecordWriter(datasets_dir + train_tfrecords_filename)
+    valid_writer = tf.python_io.TFRecordWriter(datasets_dir + valid_tfrecords_filename)
+    test_writer = tf.python_io.TFRecordWriter(datasets_dir + test_tfrecords_filename)
     dataset_list = sorted(glob('{}/*/'.format(dataset_path)))
 
-    with open('./test-labels.tsv', 'w') as test_l, open('./dataset-labels.txt', 'w') as dataset_l:
+    n_dir = 0
+    n_sample = []
+    dir_n = []
+
+    with open(datasets_dir + test_labels, 'w') as test_l, open(datasets_dir + dataset_labels, 'w') as dataset_l:
         for i, path in enumerate(dataset_list):
             print('Packing folder: {}/{}'.format(i+1, len(dataset_list)))
             ft_list = sorted(glob('{}*'.format(path)), key=lambda k: random.random())
             dir_name = os.path.basename(os.path.normpath(path))
+
             train_data = ft_list[:int((len(ft_list)+1)*train_size)]
             valid_data = ft_list[int(len(ft_list)*train_size+1):]
             test_data = ft_list[:int((len(ft_list)+1)*test_size)]
+
             dataset_l.write("{}:{}\n".format(i, dir_name))
+
+            dir_n.append(dir_name)
+            n_sample.append(0);
+            n_dir += 1
 
             for j, image in enumerate(train_data):
                 sys.stdout.write('\r    Train images: {}/{}'.format(j+1, len(train_data)))
                 pack_image(image, i, train_writer)
                 sys.stdout.flush()
+                n_sample[-1] += 1
 
             sys.stdout.write('\n')
 
@@ -60,6 +104,7 @@ def create_dataset():
                 sys.stdout.write('\r    Validation images: {}/{}'.format(j+1, len(valid_data)))
                 pack_image(image, i, valid_writer)
                 sys.stdout.flush()
+                n_sample[-1] += 1
 
             sys.stdout.write('\n')
 
@@ -70,7 +115,10 @@ def create_dataset():
                 sys.stdout.flush()
 
             sys.stdout.write('\n')
-        
+    
+    generate_plot(n_dir, n_sample, dir_n)
+    np.array(dir_n).tofile(datasets_dir + np_test_labels)
+
     train_writer.close()
     valid_writer.close()
     test_writer.close()

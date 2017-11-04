@@ -1,16 +1,20 @@
-import matplotlib.pyplot as plt
 from datetime import datetime
 import tensorflow as tf
 import seaborn as sns
+import pandas as pd
+import numpy as np
 import sys
 import io
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 # Training Features
 batch_size = 10
-test_size = 40
+test_size = 20
 keep_rate = 0.8
-n_iteration = 1024
-dense_size = 1024
+n_iteration = 3600
+dense_size = 512
 learning_rate = 1e-4 #AdamOptimizer
 
 # Dataset Features
@@ -19,7 +23,13 @@ n_channels = 3
 image_width = 352
 image_height = 560
 
-LOGDIR = "/Users/luigifreitas/CNPq/Code/tensorflow_cnn/logs/"
+# Files Config
+datasets_dir = './datasets/'
+logs_dir = './logs/'
+train_dataset_dir = 'train-dataset.tfrecords'
+valid_dataset_dir = 'valid-dataset.tfrecords'
+test_dataset_dir = 'test-dataset.tfrecords'
+
 
 keep_prob = tf.placeholder(tf.float32)
 x = tf.placeholder('float', [None, (image_width*image_height*n_channels)], name="Input_Data")
@@ -44,21 +54,19 @@ def get_single_features(filename_queue):
     label = tf.stack(tf.one_hot(label, n_classes, on_value=1, off_value=0))
     image = tf.reshape(image, image_shape)
 
-    return image, label
+    return [image, label]
 
 def get_shuffle_batch(tfrecords_filename, batch_size, name):
     with tf.name_scope(name):
         filename_queue = tf.train.string_input_producer([tfrecords_filename])
-        image, label = get_single_features(filename_queue)
-
-        return tf.train.shuffle_batch([image, label], batch_size=batch_size, num_threads=2, capacity=600, min_after_dequeue=400)
+        features = get_single_features(filename_queue)
+        return tf.train.shuffle_batch(features, batch_size=batch_size, num_threads=2, capacity=600, min_after_dequeue=400)
 
 def get_batch(tfrecords_filename, batch_size, name):
     with tf.name_scope(name):
         filename_queue = tf.train.string_input_producer([tfrecords_filename])
-        image, label = get_single_features(filename_queue)
-
-        return tf.train.batch([image, label], batch_size=batch_size, allow_smaller_final_batch=True)
+        features = get_single_features(filename_queue)
+        return tf.train.batch(features, batch_size=batch_size, allow_smaller_final_batch=True)
 
 def convolutional_layer(input, size_in, size_out, name):
     with tf.name_scope(name):
@@ -98,7 +106,7 @@ def convolutional_neural_network(x):
 
         return logits, dense
 
-def train_neural_network(x):
+def train_neural_network():
     prediction, dense_out  = convolutional_neural_network(x)
 
     with tf.name_scope('Training_Data'):
@@ -116,10 +124,10 @@ def train_neural_network(x):
         confusion_image = tf.reshape(tf.cast(confusion, tf.float32), [1, n_classes, n_classes, 1])
         tf.summary.image("Confusion_Matrix", confusion_image)
 
-    train_images, train_labels = get_shuffle_batch('train-dataset.tfrecords', batch_size, 'Train_Dataset')
-    valid_images, valid_labels = get_shuffle_batch('valid-dataset.tfrecords', batch_size, 'Valid_Dataset')
-    test_images, test_labels = get_batch('test-dataset.tfrecords', test_size, 'Test_Dataset')
-    train_num_examples = get_size('train-dataset.tfrecords')
+    train_images, train_labels = get_shuffle_batch(datasets_dir + train_dataset_dir, batch_size, 'Train_Dataset')
+    valid_images, valid_labels = get_shuffle_batch(datasets_dir + valid_dataset_dir, batch_size, 'Valid_Dataset')
+    test_images, test_labels = get_batch(datasets_dir + test_dataset_dir, test_size, 'Test_Dataset')
+    train_num_examples = get_size(datasets_dir + train_dataset_dir)
 
     embedding = tf.Variable(tf.zeros([test_size, dense_size]), name="test_embedding")
     assignment = embedding.assign(dense_out)
@@ -132,14 +140,14 @@ def train_neural_network(x):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         merged = tf.summary.merge_all()
-        train_writer = tf.summary.FileWriter(LOGDIR + "train")
-        valid_writer = tf.summary.FileWriter(LOGDIR + "validation")
+        train_writer = tf.summary.FileWriter(logs_dir + "train")
+        valid_writer = tf.summary.FileWriter(logs_dir + "validation")
         train_writer.add_graph(sess.graph)
 
         config = tf.contrib.tensorboard.plugins.projector.ProjectorConfig()
         embedding_config = config.embeddings.add()
         embedding_config.tensor_name = embedding.name
-        embedding_config.metadata_path = LOGDIR + '../test-labels.tsv'
+        embedding_config.metadata_path = logs_dir + '../datasets/labels-test.tsv'
         tf.contrib.tensorboard.plugins.projector.visualize_embeddings(train_writer, config)
 
         msg = '\n##### Convolutional Neural Network #####\nTrain Dataset Size: {} examples\nNumber of Interations: {}\n\nStarting at '
@@ -171,9 +179,65 @@ def train_neural_network(x):
 
                 msg = "Epoch {}/{} -- Training Accuracy: {:>6.1%}, Validation Accuracy: {:>6.1%}, Step: {}"
                 print(msg.format(epoch + 1, int(n_iteration/(train_num_examples/batch_size)), acc, val_acc, i))
-                saver.save(sess, LOGDIR + 'model.ckpt', i)
+                saver.save(sess, logs_dir + 'model.ckpt', i)
 
         coord.request_stop()
         coord.join(threads)
 
-train_neural_network(x)
+
+def save_plot(tconfusion, vconfusion, labels, test_dir):
+    import matplotlib.pyplot as plt
+
+    plt.gcf().clear()
+    df = pd.DataFrame(tconfusion, columns=labels, index=labels)
+    sns.heatmap(df, annot=True).set_title('Training')
+    plt.savefig(test_dir + 'train-confusion.png', dpi=250)
+
+    plt.gcf().clear()
+    df = pd.DataFrame(vconfusion, columns=labels, index=labels)
+    sns.heatmap(df, annot=True).set_title('Validation')
+    plt.savefig(test_dir + 'valid-confusion.png', dpi=250)
+
+def test_neural_network(interations, test_dir):
+    if not os.path.exists(test_dir):
+        os.makedirs(test_dir)
+
+    prediction, _  = convolutional_neural_network(x)
+
+    labels = tf.argmax(y, axis=1)
+    predictions = tf.argmax(prediction, axis=1)
+    confusion = tf.confusion_matrix(labels=labels, predictions=predictions, num_classes=n_classes)
+
+    train_images, train_labels = get_shuffle_batch(datasets_dir + train_dataset_dir, batch_size, 'Train_Dataset')
+    valid_images, valid_labels = get_shuffle_batch(datasets_dir + valid_dataset_dir, batch_size, 'Valid_Dataset')
+
+    tconfusion = np.zeros((n_classes, n_classes))
+    vconfusion = np.zeros((n_classes, n_classes))
+    labels = np.fromfile('./datasets/labels-test.dat', dtype='|U4')
+
+    with tf.Session() as sess:
+        init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+        sess.run(init_op)
+
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+        saver = tf.train.Saver()
+        saver.restore(sess, tf.train.latest_checkpoint("./logs/"))
+
+        for i in range(interations):
+            tbatch_xs, tbatch_ys = sess.run([train_images, train_labels])
+            tconfusion += sess.run(confusion, feed_dict={x: tbatch_xs, y: tbatch_ys, keep_prob: 1.0})
+
+            vbatch_xs, vbatch_ys = sess.run([valid_images, valid_labels])
+            vconfusion += sess.run(confusion, feed_dict={x: vbatch_xs, y: vbatch_ys, keep_prob: 1.0})
+
+            save_plot(tconfusion, vconfusion, labels, test_dir)
+
+        save_plot(tconfusion, vconfusion, labels, test_dir)
+
+    coord.request_stop()
+    coord.join(threads)
+
+if __name__ == "__main__":
+    train_neural_network()
