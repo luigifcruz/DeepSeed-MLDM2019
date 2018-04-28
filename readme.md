@@ -16,21 +16,6 @@ Keras with Tensorflow backend was chosen because it decreases the time needed fo
 # Phase 1
 Validate the code and find the best candidate for this dataset.
 
-## Conclusions
-- Inception ResNet v2 isn't suitable for this dataset. 
-- Inception V3 was the best fit. 
-- Adam at learning rate of 1e-4 worked really well.
-- Dropout of 50% helped addressing the overfitting.
-- Overfitting was a problem with the 10 classes dataset.
-- Deleting classes with unsulficient samples (<50) helped increase the accuracy.
-- Data argumentation helped but more samples are needed to reach a reasonable accuracy.
-
-## Future
-- SGD@(lr=0.0001, momentum=0.9) can be further tunned.
-- Elu vs Relu can be explored further.
-- VGG19 & VGG16 can be a nice fit. 
-- Experimenting with more nn layers.
-
 ## Tests
 
 ### Test #1 - Inception ResNet v2 (inception_resnet_v2)
@@ -149,16 +134,28 @@ File: inception_v3_reduced_alternative/
 - Optimizer: Adam(1e-4)
 
 Results: Validation loss increasing and accuracy static over time.
-Model: Interrupted
 File: inception_resnet_v2_reduced_alternative/
+
+## Conclusions
+- Inception ResNet v2 isn't suitable for this dataset. 
+- Inception V3 was the best fit. 
+- Adam at learning rate of 1e-4 worked really well.
+- Dropout of 50% helped addressing the overfitting.
+- Overfitting was a problem with the 10 classes dataset.
+- Deleting classes with unsulficient samples (<50) helped increase the accuracy.
+- Data argumentation helped but more samples are needed to reach a reasonable accuracy.
+
+## Future
+- SGD@(lr=0.0001, momentum=0.9) can be further tunned.
+- Elu vs Relu can be explored further.
+- VGG19 & VGG16 can be a nice fit. 
+- Experimenting with more nn layers.
 
 # Phase 2
 Repeat SUPER ACCEPTABLE with four times more epochs.
 
-## Conclusions 
-The test number two presented better accuracy over time. Both models encountered problems with overfitting even with different classes of optimizers, dropout values and nn activators. More dataset samples are needed. 
-
 ### Test #1 - Inception v3 
+- Previously Test #8 at Phase 1.
 - Smaller datasets were deleted, seven remaining.
 - Validation Dataset: 25%
 - Training Dataset: 75%
@@ -169,9 +166,8 @@ The test number two presented better accuracy over time. Both models encountered
 - Dense Layer: 1024 (elu)
 - Optimizer: SGD(lr=0.00001, momentum=0.9)
 
-Results: After seven epochs the validation loss started rising indicating that overfitting occured. Max validation accuracy was 30.04% and 75.94% of train accuracy.
-Model: inception_v3_phase2.model
-File: inception_v3/
+#### Results
+After seven epochs the validation loss started rising indicating that overfitting occured. Max validation accuracy was 30.04% and 75.94% of train accuracy.
 
 | Epoch  | Train Loss | Validation Loss | Train Accuracy | Validation Accuracy |
 |:------:|:----------:|:---------------:|:--------------:|:-------------------:|
@@ -196,7 +192,17 @@ File: inception_v3/
 | 35     | 0.6776     | 1.9209          | 74.14%         | 30.26%              |
 | 40     | 0.6392     | 1.9826          | 75.94%         | 28.41%              |
 
+#### Files
+| Files                                  | Description                                             |
+|:---------------------------------------|:--------------------------------------------------------|
+| inception_v3_phase2.model              | Final Keras trained model file                          |
+| inception_v3/accuracy.png              | Validation and Train Accuracy Plot                      |
+| inception_v3/loss.png                  | Validation and Train Loss Plot                          |
+| inception_v3/nohup.out                 | Log of everything printed by the train.py               |
+| inception_v3/train.py                  | The exactly same Keras file used to train this model    |
+
 ### Test #2 - Inception v3 [BEST]
+- Previously Test #10 at Phase 1.
 - Smaller datasets were deleted, seven remaining.
 - Validation Dataset: 25%
 - Training Dataset: 75%
@@ -207,9 +213,8 @@ File: inception_v3/
 - Dense Layer: 1024 (relu)
 - Optimizer: Adam(1e-4)
 
-Results: Validation loss increased but the mean validation accuracy was ~30%. Training accuracy was ~87%. Better overall performance but still presented overfitting meaning that the dataset is very limited. 
-Model: inception_v3_alternative_phase2.model
-File: inception_v3_alternative/
+#### Results 
+Validation loss increased but the mean validation accuracy was ~30%. Training accuracy was ~87%. Better overall performance but still presented overfitting meaning that the dataset is very limited. 
 
 | Epoch  | Train Loss | Validation Loss | Train Accuracy | Validation Accuracy |
 |:------:|:----------:|:---------------:|:--------------:|:-------------------:|
@@ -233,6 +238,19 @@ File: inception_v3_alternative/
 | 30     | 0.3874     | 2.7842          | 84.96%         | 33.97%              |
 | 35     | 0.3868     | 2.7514          | 85.33%         | 31.60%              |
 | 40     | 0.3454     | 3.0657          | 86.63%         | 30.62%              |
+
+#### Files
+| Files                                  | Description                                             |
+|:---------------------------------------|:--------------------------------------------------------|
+| inception_v3_alternative_phase2.model  | Final Keras trained model file                          |
+| inception_v3_alternative/accuracy.png  | Validation and Train Accuracy Plot                      |
+| inception_v3_alternative/loss.png      | Validation and Train Loss Plot                          |
+| inception_v3_alternative/nohup.out     | Log of everything printed by the train.py               |
+| inception_v3_alternative/train.py      | The exactly same Keras file used to train this model    |
+
+
+## Conclusions 
+The test number two presented better accuracy over time. Both models encountered problems with overfitting even with different classes of optimizers, dropout values and nn activators. More dataset samples are needed. 
 
 # Phase 3
 Generate accuracy tests with predict.py and generate confusion matrix.  
