@@ -201,7 +201,7 @@ After seven epochs the validation loss started rising indicating that overfittin
 | inception_v3/nohup.out                 | Log of everything printed by the train.py               |
 | inception_v3/train.py                  | The exactly same Keras file used to train this model    |
 
-#### Confusion Matrix
+#### Training Plots
 ![alt text](./phase_2/inception_v3/accuracy.png)
 ![alt text](./phase_2/inception_v3/loss.png)
 
@@ -252,7 +252,7 @@ Validation loss increased but the mean validation accuracy was ~30%. Training ac
 | inception_v3_alternative/nohup.out     | Log of everything printed by the train.py               |
 | inception_v3_alternative/train.py      | The exactly same Keras file used to train this model    |
 
-#### Confusion Matrix
+#### Training Plots
 ![alt text](./phase_2/inception_v3_alternative/accuracy.png)
 ![alt text](./phase_2/inception_v3_alternative/loss.png)
 
