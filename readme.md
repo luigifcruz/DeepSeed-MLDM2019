@@ -201,6 +201,10 @@ After seven epochs the validation loss started rising indicating that overfittin
 | inception_v3/nohup.out                 | Log of everything printed by the train.py               |
 | inception_v3/train.py                  | The exactly same Keras file used to train this model    |
 
+#### Confusion Matrix
+![alt text](./phase_2/inception_v3/accuracy.png)
+![alt text](./phase_2/inception_v3/loss.png)
+
 ### Test #2 - Inception v3 [BEST]
 - Previously Test #10 at Phase 1.
 - Smaller datasets were deleted, seven remaining.
@@ -248,6 +252,9 @@ Validation loss increased but the mean validation accuracy was ~30%. Training ac
 | inception_v3_alternative/nohup.out     | Log of everything printed by the train.py               |
 | inception_v3_alternative/train.py      | The exactly same Keras file used to train this model    |
 
+#### Confusion Matrix
+![alt text](./phase_2/inception_v3_alternative/accuracy.png)
+![alt text](./phase_2/inception_v3_alternative/loss.png)
 
 ## Conclusions 
 The test number two presented better accuracy over time. Both models encountered problems with overfitting even with different classes of optimizers, dropout values and nn activators. More dataset samples are needed. 
@@ -256,6 +263,7 @@ The test number two presented better accuracy over time. Both models encountered
 Generate accuracy tests with predict.py and generate confusion matrix.
 
 ### Test #1 - Inception v3 [BEST]
+Analysis of Test #1 of Phase 2.
 
 #### Bottom Network
 - Dense Layer: 1024 (elu)
@@ -274,6 +282,7 @@ Generate accuracy tests with predict.py and generate confusion matrix.
 ![alt text](./phase_3/test1_confusion_matrix_training.png)
 
 ### Test #2 - Inception v3 
+Analysis of Test #2 of Phase 2.
 
 #### Bottom Network
 - Dense Layer: 1024 (relu)
@@ -291,3 +300,5 @@ Generate accuracy tests with predict.py and generate confusion matrix.
 ![alt text](./phase_3/test2_confusion_matrix_validation.png)
 ![alt text](./phase_3/test2_confusion_matrix_training.png)
 
+## Conclusions 
+The tests revealed that the Test #1 have more accuracy. 
