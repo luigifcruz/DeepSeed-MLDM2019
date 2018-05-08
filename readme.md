@@ -301,4 +301,4 @@ Analysis of Test #2 of Phase 2.
 ![alt text](./phase_3/test2_confusion_matrix_training.png)
 
 ## Conclusions 
-The tests revealed that the Test #1 have more accuracy. 
+The tests revealed that the Test #1 have more accuracy. The classes 3UFI and 4PDI are lowering the overall accuracy. Removing them in the next phase. 
