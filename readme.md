@@ -302,3 +302,24 @@ Analysis of Test #2 of Phase 2.
 
 ## Conclusions 
 The tests revealed that the Test #1 have more accuracy. The classes 3UFI and 4PDI are lowering the overall accuracy. Removing them in the next phase. 
+
+# Phase 4
+
+### Test #1 - Inception v3 [BEST]
+Re-training Phase 2 Test #1 CNN (Inception v3) with 5 clases discading 3UFI and 4PDI for accuracy concerns.
+
+#### Bottom Network
+- Dense Layer: 1024 (elu)
+- Dropout: 0.2%
+- Dense Layer: 1024 (elu)
+- Optimizer: SGD(lr=0.00001, momentum=0.9)
+
+#### Predictions 
+| Dataset        | Accuracy     |
+|:---------------|:-------------|
+|Train           |        |
+|Validation      |        |
+
+#### Confusion Matrix
+![alt text](./phase_4/)
+![alt text](./phase_4/)
