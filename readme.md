@@ -346,9 +346,9 @@ The accuracy improved compared to the last phase. Validation loss is static as f
 #### Predictions 
 | Dataset        | Accuracy     |
 |:---------------|:-------------|
-|Train           |        |
-|Validation      |        |
+|Train           | 41.41%       |
+|Validation      | 45.31%       |
 
 #### Confusion Matrix
-![alt text](./phase_4/)
-![alt text](./phase_4/)
+![alt text](./phase_4/phase_4_validation_confusion_matrix.png)
+![alt text](./phase_4/phase_4_train_confusion_matrix.png)
