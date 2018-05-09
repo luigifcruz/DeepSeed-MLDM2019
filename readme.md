@@ -314,6 +314,35 @@ Re-training Phase 2 Test #1 CNN (Inception v3) with 5 clases discading 3UFI and 
 - Dense Layer: 1024 (elu)
 - Optimizer: SGD(lr=0.00001, momentum=0.9)
 
+#### Training Results
+The accuracy improved compared to the last phase. Validation loss is static as fast and training loss decreasing as it should, no overfitting detected here. Max validation accuracy is 43.11% and ~38% mean. Max training accuracy is 82.35%. Both accuracies were increasing with a linear rate.
+
+| Epoch  | Train Loss | Validation Loss | Train Accuracy | Validation Accuracy |
+|:------:|:----------:|:---------------:|:--------------:|:-------------------:|
+| 01     | 1.6832     | 1.5387          | 27.65%         | 32.49%              |
+| 05     | 1.0287     | 1.4054          | 56.19%         | 35.96%              |
+| 10     | 0.7967     | 1.4733          | 65.97%         | 34.13%              |
+| 15     | 0.7013     | 1.5691          | 72.00%         | 34.62%              |
+| 20     | 0.5992     | 1.4808          | 76.52%         | 37.95%              |
+| 25     | 0.5488     | 1.4225          | 78.12%         | 40.18%              |
+| 30     | 0.5176     | 1.4038          | 80.30%         | 40.38%              |
+| 35     | 0.5153     | 1.3598          | 78.25%         | 42.12%              |
+| 40     | 0.4653     | 1.4897          | 81.59%         | 43.11%              |
+
+#### Training Plots
+
+![alt text](./phase_4/accuracy.png)
+![alt text](./phase_4/loss.png)
+
+#### Files
+| Files                                  | Description                                             |
+|:---------------------------------------|:--------------------------------------------------------|
+| best_phase4.model                      | Final Keras trained model file                          |
+| phase_4/accuracy.png                   | Validation and Train Accuracy Plot                      |
+| phase_4/loss.png                       | Validation and Train Loss Plot                          |
+| phase_4/results.txt                    | Log of everything printed by the train.py               |
+| phase_4/train_p4.py                    | The exactly same Keras file used to train this model    |
+
 #### Predictions 
 | Dataset        | Accuracy     |
 |:---------------|:-------------|
