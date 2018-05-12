@@ -1,0 +1,89 @@
+luigifcruz@workstation:~/HDD/IC/Code/keras/phase_4_B$ python train.py --plot
+/home/luigifcruz/.local/lib/python2.7/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Found 198 images belonging to 5 classes.
+Found 63 images belonging to 5 classes.
+Currently Training: best_phase4_B.model
+{'2UFI': 1, '3PDI': 2, '2UDI': 0, '3PFI': 3, '3UDI': 4}
+Epoch 1/40
+50/50 [==============================] - 446s 9s/step - loss: 1.8560 - acc: 0.2117 - val_loss: 1.6677 - val_acc: 0.2163
+Epoch 2/40
+50/50 [==============================] - 441s 9s/step - loss: 1.6166 - acc: 0.3001 - val_loss: 1.5676 - val_acc: 0.2515
+Epoch 3/40
+50/50 [==============================] - 446s 9s/step - loss: 1.4998 - acc: 0.3323 - val_loss: 1.5277 - val_acc: 0.2748
+Epoch 4/40
+50/50 [==============================] - 485s 10s/step - loss: 1.4105 - acc: 0.3798 - val_loss: 1.5034 - val_acc: 0.2812
+Epoch 5/40
+50/50 [==============================] - 485s 10s/step - loss: 1.3415 - acc: 0.4143 - val_loss: 1.4716 - val_acc: 0.3110
+Epoch 6/40
+50/50 [==============================] - 470s 9s/step - loss: 1.2865 - acc: 0.4278 - val_loss: 1.4440 - val_acc: 0.3070
+Epoch 7/40
+50/50 [==============================] - 483s 10s/step - loss: 1.2203 - acc: 0.4836 - val_loss: 1.4655 - val_acc: 0.3150
+Epoch 8/40
+50/50 [==============================] - 501s 10s/step - loss: 1.1823 - acc: 0.5059 - val_loss: 1.4007 - val_acc: 0.3194
+Epoch 9/40
+50/50 [==============================] - 504s 10s/step - loss: 1.1911 - acc: 0.5045 - val_loss: 1.4019 - val_acc: 0.3304
+Epoch 10/40
+50/50 [==============================] - 481s 10s/step - loss: 1.1022 - acc: 0.5462 - val_loss: 1.4181 - val_acc: 0.3259
+Epoch 11/40
+50/50 [==============================] - 498s 10s/step - loss: 1.1118 - acc: 0.5304 - val_loss: 1.3782 - val_acc: 0.3398
+Epoch 12/40
+50/50 [==============================] - 506s 10s/step - loss: 1.1296 - acc: 0.4977 - val_loss: 1.3509 - val_acc: 0.3562
+Epoch 13/40
+50/50 [==============================] - 480s 10s/step - loss: 1.0983 - acc: 0.5434 - val_loss: 1.3667 - val_acc: 0.3289
+Epoch 14/40
+50/50 [==============================] - 458s 9s/step - loss: 1.0479 - acc: 0.5332 - val_loss: 1.3814 - val_acc: 0.3373
+Epoch 15/40
+50/50 [==============================] - 442s 9s/step - loss: 1.0126 - acc: 0.5765 - val_loss: 1.3921 - val_acc: 0.3299
+Epoch 16/40
+50/50 [==============================] - 448s 9s/step - loss: 1.0236 - acc: 0.5667 - val_loss: 1.3253 - val_acc: 0.3527
+Epoch 17/40
+50/50 [==============================] - 461s 9s/step - loss: 0.9907 - acc: 0.5787 - val_loss: 1.3860 - val_acc: 0.3393
+Epoch 18/40
+50/50 [==============================] - 425s 9s/step - loss: 0.9353 - acc: 0.6259 - val_loss: 1.3397 - val_acc: 0.3591
+Epoch 19/40
+50/50 [==============================] - 426s 9s/step - loss: 0.9420 - acc: 0.6149 - val_loss: 1.3531 - val_acc: 0.3447
+Epoch 20/40
+50/50 [==============================] - 431s 9s/step - loss: 0.9196 - acc: 0.6136 - val_loss: 1.3457 - val_acc: 0.3482
+Epoch 21/40
+50/50 [==============================] - 430s 9s/step - loss: 0.8945 - acc: 0.6297 - val_loss: 1.4276 - val_acc: 0.3309
+Epoch 22/40
+50/50 [==============================] - 426s 9s/step - loss: 0.9329 - acc: 0.5937 - val_loss: 1.3543 - val_acc: 0.3462
+Epoch 23/40
+50/50 [==============================] - 425s 8s/step - loss: 0.8610 - acc: 0.6511 - val_loss: 1.3196 - val_acc: 0.3700
+Epoch 24/40
+50/50 [==============================] - 431s 9s/step - loss: 0.8926 - acc: 0.6218 - val_loss: 1.3614 - val_acc: 0.3676
+Epoch 25/40
+50/50 [==============================] - 425s 9s/step - loss: 0.8536 - acc: 0.6485 - val_loss: 1.3399 - val_acc: 0.3656
+Epoch 26/40
+50/50 [==============================] - 430s 9s/step - loss: 0.8517 - acc: 0.6448 - val_loss: 1.4291 - val_acc: 0.3323
+Epoch 27/40
+50/50 [==============================] - 425s 9s/step - loss: 0.8400 - acc: 0.6489 - val_loss: 1.3701 - val_acc: 0.3695
+Epoch 28/40
+50/50 [==============================] - 430s 9s/step - loss: 0.8333 - acc: 0.6466 - val_loss: 1.3748 - val_acc: 0.3487
+Epoch 29/40
+50/50 [==============================] - 429s 9s/step - loss: 0.8373 - acc: 0.6325 - val_loss: 1.3615 - val_acc: 0.3641
+Epoch 30/40
+50/50 [==============================] - 441s 9s/step - loss: 0.8496 - acc: 0.6240 - val_loss: 1.3488 - val_acc: 0.3656
+Epoch 31/40
+50/50 [==============================] - 438s 9s/step - loss: 0.7836 - acc: 0.6763 - val_loss: 1.3660 - val_acc: 0.3631
+Epoch 32/40
+50/50 [==============================] - 446s 9s/step - loss: 0.8349 - acc: 0.6436 - val_loss: 1.4063 - val_acc: 0.3388
+Epoch 33/40
+50/50 [==============================] - 435s 9s/step - loss: 0.8124 - acc: 0.6690 - val_loss: 1.5069 - val_acc: 0.3368
+Epoch 34/40
+50/50 [==============================] - 435s 9s/step - loss: 0.7551 - acc: 0.6991 - val_loss: 1.4206 - val_acc: 0.3428
+Epoch 35/40
+50/50 [==============================] - 430s 9s/step - loss: 0.7806 - acc: 0.6591 - val_loss: 1.3092 - val_acc: 0.3869
+Epoch 36/40
+50/50 [==============================] - 431s 9s/step - loss: 0.7966 - acc: 0.6645 - val_loss: 1.3144 - val_acc: 0.3780
+Epoch 37/40
+50/50 [==============================] - 455s 9s/step - loss: 0.7423 - acc: 0.6863 - val_loss: 1.4292 - val_acc: 0.3472
+Epoch 38/40
+50/50 [==============================] - 432s 9s/step - loss: 0.7402 - acc: 0.6837 - val_loss: 1.4195 - val_acc: 0.3512
+Epoch 39/40
+50/50 [==============================] - 468s 9s/step - loss: 0.7358 - acc: 0.7084 - val_loss: 1.3580 - val_acc: 0.3686
+Epoch 40/40
+50/50 [==============================] - 426s 9s/step - loss: 0.7629 - acc: 0.6660 - val_loss: 1.4399 - val_acc: 0.3576
+['acc', 'loss', 'val_acc', 'val_loss']
