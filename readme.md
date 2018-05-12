@@ -305,7 +305,7 @@ The tests revealed that the Test #1 have more accuracy. The classes 3UFI and 4PD
 
 # Phase 4
 
-### Test A - Inception v3 [BEST]
+### Test A - Inception v3
 Re-training Phase 2 Test #1 CNN (Inception v3) with 5 clases discading 3UFI and 4PDI for accuracy concerns.
 
 #### Bottom Network
@@ -353,7 +353,7 @@ The accuracy improved compared to the last phase. Validation loss is static as f
 ![alt text](./phase_4/phase_4_validation_confusion_matrix.png)
 ![alt text](./phase_4/phase_4_train_confusion_matrix.png)
 
-### Test #1 - Inception v3 [BEST]
+### Test B - Inception v3 [BEST]
 Re-training Phase 2 Test #1 CNN (Inception v3) with 5 clases discading 3UFI and 4PDI for accuracy concerns.
 
 #### Bottom Network
@@ -363,7 +363,7 @@ Re-training Phase 2 Test #1 CNN (Inception v3) with 5 clases discading 3UFI and 
 - Optimizer: SGD(lr=0.00001, momentum=0.9)
 
 #### Training Results
-
+Better overall result compared to the Test A.
 
 | Epoch  | Train Loss | Validation Loss | Train Accuracy | Validation Accuracy |
 |:------:|:----------:|:---------------:|:--------------:|:-------------------:|
@@ -385,18 +385,18 @@ Re-training Phase 2 Test #1 CNN (Inception v3) with 5 clases discading 3UFI and 
 #### Files
 | Files                                  | Description                                             |
 |:---------------------------------------|:--------------------------------------------------------|
-| best_phase4.model                      | Final Keras trained model file                          |
+| best_phase4_b.model                    | Final Keras trained model file                          |
 | phase_4/B/accuracy.png                 | Validation and Train Accuracy Plot                      |
 | phase_4/B/loss.png                     | Validation and Train Loss Plot                          |
-| phase_4/B/results.txt                  | Log of everything printed by the train.py               |
-| phase_4/B/train_p4.py                  | The exactly same Keras file used to train this model    |
+| phase_4/B/log.txt                      | Log of everything printed by the train.py               |
+| phase_4/B/train.py                     | The exactly same Keras file used to train this model    |
 
 #### Predictions 
 | Dataset        | Accuracy     |
 |:---------------|:-------------|
-|Train           |        |
-|Validation      |        |
+|Train           | 50.50%       |
+|Validation      | 46.03%       |
 
 #### Confusion Matrix
-![alt text](./phase_4/B/.png)
-![alt text](./phase_4/B/.png)
+![alt text](./phase_4/B/phase_4_validation_confusion_matrix.png)
+![alt text](./phase_4/B/phase_4_train_confusion_matrix.png)
